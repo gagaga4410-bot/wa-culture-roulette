@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#8b3028">
+<title>和の文化ルーレット</title>
+<style>
+:root{--red:#96372d;--gold:#d5b36c;--ink:#382d24;--paper:#fffaf0}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:20px;background:radial-gradient(circle at top,#fffdf7,#e8dcc4);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+main{max-width:900px;margin:auto;padding:clamp(22px,5vw,48px);text-align:center;background:#fffdf8;border:1px solid #d8c49b;border-radius:28px;box-shadow:0 18px 50px #5b40201c}
+.kicker{letter-spacing:.2em;color:#8d6b3d;font-size:13px;font-weight:700}
+h1{font-size:clamp(30px,6vw,52px);color:var(--red);margin:12px 0}
+.lead{color:#74634f;margin:0 auto 22px}
+.wheel-wrap{width:min(76vw,370px);aspect-ratio:1;margin:28px auto 22px;position:relative}
+.pointer{position:absolute;z-index:2;top:-10px;left:50%;transform:translateX(-50%);border-left:19px solid transparent;border-right:19px solid transparent;border-bottom:0;border-top:34px solid var(--red);filter:drop-shadow(0 2px 2px #0003)}
+.wheel{width:100%;height:100%;border-radius:50%;border:10px solid #f7e9c9;outline:5px solid #9d7541;box-shadow:0 10px 25px #56391e35;display:grid;place-items:center;background:conic-gradient(#a33b30 0 12deg,#d7b66e 12deg 24deg,#385c50 24deg 36deg,#eee0bd 36deg 48deg,#a33b30 48deg 60deg,#d7b66e 60deg 72deg,#385c50 72deg 84deg,#eee0bd 84deg 96deg,#a33b30 96deg 108deg,#d7b66e 108deg 120deg,#385c50 120deg 132deg,#eee0bd 132deg 144deg,#a33b30 144deg 156deg,#d7b66e 156deg 168deg,#385c50 168deg 180deg,#eee0bd 180deg 192deg,#a33b30 192deg 204deg,#d7b66e 204deg 216deg,#385c50 216deg 228deg,#eee0bd 228deg 240deg,#a33b30 240deg 252deg,#d7b66e 252deg 264deg,#385c50 264deg 276deg,#eee0bd 276deg 288deg,#a33b30 288deg 300deg,#d7b66e 300deg 312deg,#385c50 312deg 324deg,#eee0bd 324deg 336deg,#a33b30 336deg 348deg,#d7b66e 348deg 360deg);transition:transform 4.2s cubic-bezier(.12,.72,.12,1)}
+.hub{width:29%;height:29%;border-radius:50%;background:var(--paper);border:5px solid var(--gold);display:grid;place-items:center;font-size:40px;box-shadow:0 3px 10px #0002}
+button{border:0;border-radius:16px;background:var(--red);color:white;padding:17px 38px;font-size:clamp(20px,4vw,26px);font-weight:700;cursor:pointer;box-shadow:0 5px 0 #64231e}
+button:active{transform:translateY(3px);box-shadow:0 2px 0 #64231e}
+button:disabled{opacity:.55;cursor:wait}
+.result{margin:26px auto 0;padding:22px 16px;max-width:680px;min-height:130px;border:2px solid #d9c18e;border-radius:20px;background:#fffaf0}
+.result-label{font-size:13px;letter-spacing:.18em;color:#92764b;font-weight:700}
+#resultName{font-size:clamp(32px,7vw,50px);font-weight:800;color:var(--red);margin:7px 0}
+#resultDesc{font-size:clamp(14px,2.5vw,18px);line-height:1.7;margin:0;color:#625343}
+.bottom{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.secondary{background:#eee4d0;color:#5b4630;box-shadow:0 4px 0 #cbb995;font-size:15px;padding:11px 18px}
+.history{margin:26px auto 0;max-width:680px;text-align:left}
+.history h2{font-size:16px;color:#80633c}
+#historyList{display:flex;flex-wrap:wrap;gap:8px;padding:0;list-style:none}
+#historyList li{background:#f1e7d4;border-radius:999px;padding:7px 12px;font-size:14px}
+.note{font-size:12px;color:#927f68;margin-top:22px}
+@media(max-width:520px){body{padding:10px}main{border-radius:20px}.wheel-wrap{width:min(78vw,320px)}button#spinButton{width:100%}}
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">JAPANESE CULTURE • RANDOM PICKER</div>
+  <h1>和の文化ルーレット</h1>
+  <p class="lead">ルーレットを回して、日本の文化との出会いを楽しもう。</p>
+  <div class="wheel-wrap"><div class="pointer"></div><div class="wheel" id="wheel"><div class="hub">和</div></div></div>
+  <button id="spinButton">🎯 ルーレットを回す</button>
+  <section class="result" aria-live="polite">
+    <div class="result-label">今回選ばれた和の文化</div>
+    <div id="resultName">さあ、回してみよう！</div>
+    <p id="resultDesc">ボタンを押すと、70種類以上の中から一つが選ばれます。</p>
+  </section>
+  <div class="bottom">
+    <button class="secondary" id="againButton" type="button">もう一度回す</button>
+    <button class="secondary" id="clearButton" type="button">履歴を消す</button>
+  </div>
+  <section class="history"><h2>これまでに出た文化</h2><ul id="historyList"><li>まだありません</li></ul></section>
+  <p class="note">※文化の分類は、学習のきっかけとして幅広く選んでいます。</p>
+</main>
+<script>
+const cultures = [
+["和紙","植物の繊維を原料につくられる、日本の伝統的な紙。"],
+["書道・筆","筆と墨を使い、文字の形や運びを表現する芸術。"],
+["ろうそく・和ろうそく","植物由来のろうなどを用いた、日本の灯りの文化。"],
+["焼き物・陶磁器","土や石を形づくり、焼いて器などにする工芸。"],
+["漆器","漆を塗り重ねて仕上げる、つややかで丈夫な器。"],
+["藍染め","藍の染料で布を青く染める伝統技法。"],
+["友禅染","糊を使って模様を染め分ける華やかな染色技法。"],
+["絞り染め","布をくくったり縫ったりして模様を生み出す染色。"],
+["組紐","細い糸を組み合わせてつくる飾りひも。"],
+["西陣織","京都・西陣で発展した、先染め糸による織物。"],
+["結城紬","茨城県ゆかりの、真綿から糸をつむぐ絹織物。"],
+["和服・着物","季節や場面に合わせて着こなす日本の衣服。"],
+["帯","着物を整え、装いを引き立てる布。"],
+["扇子","折りたたんで持ち運べる、涼をとる道具や舞踊の小道具。"],
+["団扇","風を送るための、手であおぐ道具。"],
+["和傘","竹の骨と和紙などでつくられる伝統的な傘。"],
+["提灯","骨組みに紙や布を張り、灯りをともす道具。"],
+["風鈴","風に揺れて音を奏で、涼しさを感じさせる飾り。"],
+["竹細工","竹を割り、編み、暮らしの道具などに仕立てる工芸。"],
+["木工・指物","木を組み合わせ、家具や道具をつくる技術。"],
+["寄木細工","異なる色や木目の木を組み合わせて模様をつくる工芸。"],
+["金箔","金を薄く打ち延ばし、建築や工芸品などを飾る素材。"],
+["南部鉄器","岩手県で発展した、鉄を鋳造してつくる道具。"],
+["銅器・鎚起銅器","銅板を打ち起こして器などをつくる金工。"],
+["日本刀","鍛錬や研磨などの技術が生きる、日本の刀剣。"],
+["甲冑","武士が身を守るために用いたよろいとかぶと。"],
+["根付","印籠などを帯に留めるための、小さな彫刻。"],
+["人形浄瑠璃","人形の動き、語り、三味線が一体となる舞台芸能。"],
+["歌舞伎","音楽や舞踊、様式美を特徴とする日本の演劇。"],
+["能","面や謡、舞によって物語や心情を表す古典芸能。"],
+["狂言","せりふや動きで人間のおかしみを描く伝統芸能。"],
+["文楽","三人遣いの人形と太夫・三味線による舞台芸能。"],
+["落語","一人の演者が話と仕草で物語を演じる話芸。"],
+["講談","張り扇を使い、歴史や物語を語る話芸。"],
+["和太鼓","祭りや芸能などで演奏される日本の太鼓。"],
+["三味線","撥で弦を弾いて演奏する日本の弦楽器。"],
+["箏","柱で弦の音程を調整して奏でる日本の楽器。"],
+["尺八","竹製の縦笛。息づかいを生かした音色が特徴。"],
+["篠笛","祭り囃子などでも親しまれる横笛。"],
+["雅楽","宮廷で伝承されてきた歌や舞、器楽の音楽。"],
+["茶道","抹茶を点て、客をもてなす作法と精神を大切にする文化。"],
+["華道・生け花","草木の姿や季節感を生かして花をいける芸術。"],
+["香道","香木の香りを聞き分け、味わう作法と文化。"],
+["和菓子","季節や自然を形や色に映した日本の菓子。"],
+["和食","素材や季節、だしを大切にする日本の食文化。"],
+["寿司","魚介や野菜などを酢飯と組み合わせた料理。"],
+["そば","そば粉を使った麺料理。地域ごとに多様な食べ方がある。"],
+["味噌","大豆などを発酵させてつくる、日本の伝統的な調味料。"],
+["醤油","大豆や小麦などを発酵・熟成させてつくる調味料。"],
+["漬物","野菜などを塩やぬか、味噌などで漬けた保存食。"],
+["発酵食品","麹や微生物の働きを生かした、味噌・醤油などの食品。"],
+["折り紙","紙を折ることで、さまざまな形をつくる遊びや造形。"],
+["水引","贈り物の包みなどを飾る、紙製のひもと結びの文化。"],
+["風呂敷","物を包んだり運んだりする、四角い布。"],
+["折形","贈り物などを紙で包む、礼法に根ざした作法。"],
+["書院造","畳や障子、床の間などを備えた日本の建築様式。"],
+["数寄屋造","茶室の意匠を取り入れた、簡素で趣のある建築様式。"],
+["庭園","石や水、植栽などで自然の景色を表現する空間。"],
+["枯山水","水を使わず、石や砂などで山水を表す庭園様式。"],
+["畳","い草などを編んだ畳表を使う、日本の床材。"],
+["障子","木の枠に紙を張り、光をやわらかく通す建具。"],
+["襖","部屋を仕切り、絵や模様で室内を彩る建具。"],
+["瓦","粘土などを焼いてつくる、屋根を葺く材料。"],
+["左官","土や漆喰などを壁や床に塗り仕上げる技術。"],
+["宮大工","寺社建築などを手がけ、木材を加工し組み上げる技術。"],
+["祭り・神輿","地域の人々が受け継いできた祭礼や神輿の文化。"],
+["盆踊り","音頭や太鼓に合わせて輪になって踊る民俗芸能。"],
+["獅子舞","獅子頭をかぶって舞い、厄よけや招福を願う芸能。"],
+["こけし","木を削ってつくる、東北地方に伝わる郷土人形。"],
+["だるま","願いを込めて目を入れる、縁起物の人形。"],
+["郷土玩具","土地の素材や風習から生まれ、地域で受け継がれる玩具。"],
+["けん玉","玉を皿や剣先に乗せて遊ぶ伝統的な玩具。"],
+["将棋","駒を動かして相手の王将を詰ませる盤上遊戯。"],
+["囲碁","黒と白の石で陣地を囲い合う盤上遊戯。"],
+["百人一首","和歌を札にした、読み札と取り札で遊ぶかるた。"],
+["俳句","季語などを手がかりに、五・七・五で表現する短詩。"],
+["短歌","五・七・五・七・七の音数を基本とする短い詩。"]
+];
+const wheel=document.getElementById("wheel");
+const spinButton=document.getElementById("spinButton");
+const resultName=document.getElementById("resultName");
+const resultDesc=document.getElementById("resultDesc");
+const historyList=document.getElementById("historyList");
+let rotation=0,spinning=false,previous=-1;
+const history=[];
+function spin(){
+ if(spinning)return;
+ spinning=true;spinButton.disabled=true;
+ resultName.textContent="抽選中…";resultDesc.textContent="どんな文化に出会えるかな？";
+ let index;do{index=Math.floor(Math.random()*cultures.length)}while(index===previous);
+ previous=index;
+ const turns=5+Math.floor(Math.random()*3);
+ const target=360-(index/cultures.length)*360;
+ rotation+=turns*360+target-(rotation%360);
+ wheel.style.transform=`rotate(${rotation}deg)`;
+ setTimeout(()=>{
+  const [name,desc]=cultures[index];
+  resultName.textContent=name;resultDesc.textContent=desc;
+  history.unshift(name);renderHistory();
+  spinning=false;spinButton.disabled=false;
+ },4300);
+}
+function renderHistory(){
+ historyList.innerHTML="";
+ if(!history.length){historyList.innerHTML="<li>まだありません</li>";return}
+ history.slice(0,12).forEach(name=>{const li=document.createElement("li");li.textContent=name;historyList.appendChild(li)});
+}
+spinButton.addEventListener("click",spin);
+document.getElementById("againButton").addEventListener("click",spin);
+document.getElementById("clearButton").addEventListener("click",()=>{history.length=0;renderHistory()});
+</script>
+</body>
+</html>
